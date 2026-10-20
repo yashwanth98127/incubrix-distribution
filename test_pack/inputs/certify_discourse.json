@@ -1,0 +1,9 @@
+{
+  "kind": "certify",
+  "destination": {
+    "name": "Batch Certify Forum",
+    "url": "https://batch-certify.example.com",
+    "platform_key": "discourse",
+    "connector_key": "discourse"
+  }
+}

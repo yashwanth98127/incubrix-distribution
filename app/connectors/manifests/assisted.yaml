@@ -1,0 +1,14 @@
+key: assisted
+version: 1.0.0
+tier: assisted
+auth: none
+surfaces:
+  - key: manual_post
+    content_types: [text, image, video_link, article]
+    spec: {title_max_chars: 300, body_max_chars: 20000, links_allowed: true}
+rate_limits:
+  per_connection: {requests: 1000, per_seconds: 60}
+capabilities: [build_assist_pack]
+error_map:
+  "422": PLATFORM_CONTENT_REJECTED
+instance_param: base_url   # one per community where a human must post (Slack groups, Discord servers w/o bots, invite-only forums)

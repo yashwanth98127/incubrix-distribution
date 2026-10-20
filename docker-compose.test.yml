@@ -1,0 +1,13 @@
+# Lightweight override for CI/test runs: no Lemmy/Ghost/MinIO containers
+# needed (tests boot the mock server themselves, Must-have #7 "one command
+# runs all tests ... with no API keys"). Used by scripts/run_tests.sh.
+services:
+  app:
+    build: .
+    command: ["python3", "-m", "pytest", "-q"]
+    environment:
+      SIMULATION_MODE: "true"
+      INCUBRIX_FORCE_LOCAL_STORAGE: "1"
+      DATABASE_URL: "sqlite:////app/data/test_incubrix.db"
+    volumes:
+      - .:/app

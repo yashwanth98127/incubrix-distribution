@@ -1,0 +1,36 @@
+{
+  "kind": "publish",
+  "input": {
+    "kind": "publish",
+    "destination": {
+      "name": "Batch No-Promo Forum",
+      "url": "https://batch-nopromo.example.com",
+      "platform_key": "discourse",
+      "connector_key": "discourse",
+      "self_promo_allowed": false
+    },
+    "rendition": {
+      "title": "Check out my product",
+      "body": "Buy my thing, it's great!",
+      "content_type": "text",
+      "is_promotional": true
+    }
+  },
+  "accepted": 202,
+  "job": {
+    "job_id": "job_a2b0d484020241b9",
+    "kind": "publish",
+    "status": "failed",
+    "progress": 0,
+    "result": null,
+    "error": {
+      "code": "DEST_RULE_SELF_PROMO_BANNED",
+      "message": "destination bans self-promotion; content is marked promotional",
+      "retryable": false,
+      "details": {},
+      "traceback": "Traceback (most recent call last):\n  File \"/home/claude/incubrix-distribution/app/core/jobs.py\", line 49, in _run\n    result = fn(db, job, *args, **kwargs)\n  File \"/home/claude/incubrix-distribution/app/routes/publish_routes.py\", line 24, in _publish_job\n    post = publish_to_destination(db, destination, Rendition(**rendition), idem_key)\n  File \"/home/claude/incubrix-distribution/app/core/publish_service.py\", line 45, in publish_to_destination\n    rules.enforce(db, destination, rendition)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/claude/incubrix-distribution/app/core/rules.py\", line 89, in enforce\n    raise IncuBrixError(\"DEST_RULE_SELF_PROMO_BANNED\", first.reason)\napp.core.errors.IncuBrixError: destination bans self-promotion; content is marked promotional\n"
+    },
+    "created_at": "2026-10-20T06:32:47.610504",
+    "updated_at": "2026-10-20T06:32:47.643064"
+  }
+}

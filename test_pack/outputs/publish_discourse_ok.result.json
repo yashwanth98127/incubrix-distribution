@@ -1,0 +1,37 @@
+{
+  "kind": "publish",
+  "input": {
+    "kind": "publish",
+    "destination": {
+      "name": "Batch Test Forum",
+      "url": "https://batch-forum.example.com",
+      "platform_key": "discourse",
+      "connector_key": "discourse",
+      "frequency_cap": {
+        "count": 3,
+        "per_hours": 168
+      }
+    },
+    "rendition": {
+      "title": "Batch test post",
+      "body": "This is a normal batch-run test post about AI tooling.",
+      "content_type": "text"
+    }
+  },
+  "accepted": 202,
+  "job": {
+    "job_id": "job_bb63e7ffd82242ef",
+    "kind": "publish",
+    "status": "succeeded",
+    "progress": 100,
+    "result": {
+      "post_id": "post_83aaffa0b95c4835",
+      "platform_post_id": "331853",
+      "live_url": "/t/331853",
+      "status": "published"
+    },
+    "error": null,
+    "created_at": "2026-10-20T06:32:47.949852",
+    "updated_at": "2026-10-20T06:32:48.026749"
+  }
+}

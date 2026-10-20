@@ -1,0 +1,16 @@
+{
+  "kind": "publish",
+  "destination": {
+    "name": "Batch No-Promo Forum",
+    "url": "https://batch-nopromo.example.com",
+    "platform_key": "discourse",
+    "connector_key": "discourse",
+    "self_promo_allowed": false
+  },
+  "rendition": {
+    "title": "Check out my product",
+    "body": "Buy my thing, it's great!",
+    "content_type": "text",
+    "is_promotional": true
+  }
+}

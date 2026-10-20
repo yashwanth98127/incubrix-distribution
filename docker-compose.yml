@@ -1,0 +1,108 @@
+x-common-env: &common-env
+  SIMULATION_MODE: "true"
+  ENV: "docker"
+  LOG_LEVEL: "INFO"
+  DATABASE_URL: "sqlite:////app/data/incubrix.db"
+  S3_ENDPOINT_URL: "http://minio:9000"
+  S3_ACCESS_KEY: "incubrix"
+  S3_SECRET_KEY: "incubrix_secret"
+  S3_BUCKET: "incubrix-distribution"
+  S3_PUBLIC_BASE_URL: "http://localhost:9000/incubrix-distribution"
+  S3_USE_SSL: "false"
+  DISCOURSE_MOCK_BASE_URL: "http://mock-platforms:9000"
+  DEVTO_MOCK_BASE_URL: "http://mock-platforms:9000"
+  WEBHOOK_RECEIVER_BASE_URL: "http://mock-platforms:9000"
+  LEMMY_BASE_URL: "http://lemmy:8536"
+  GHOST_BASE_URL: "http://ghost:2368"
+  LEMMY_USERNAME: "incubrix_bot"
+  LEMMY_PASSWORD: "incubrix_dev_password_123"
+  GHOST_ADMIN_API_KEY: ""
+  WEBHOOK_SHARED_SECRET: "dev_only_shared_secret_change_me"
+  AI_PROVIDER: "mock"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      <<: *common-env
+    volumes:
+      - app_data:/app/data
+    depends_on:
+      minio:
+        condition: service_started
+      mock-platforms:
+        condition: service_started
+      lemmy:
+        condition: service_started
+      ghost:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mock-platforms:
+    build: ./mocks/platform_mock
+    ports:
+      - "9100:9000"
+    environment:
+      WEBHOOK_SHARED_SECRET: "dev_only_shared_secret_change_me"
+
+  minio:
+    image: minio/minio:RELEASE.2024-10-13T13-34-11Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: incubrix
+      MINIO_ROOT_PASSWORD: incubrix_secret
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  # Real local Lemmy instance (Must-have #8: "local Lemmy and Ghost instances").
+  # Minimal single-process config for assessment/demo purposes.
+  lemmy:
+    image: dessalines/lemmy:0.19.5
+    environment:
+      LEMMY_DATABASE_URL: postgres://lemmy:lemmy_password@lemmy-db:5432/lemmy
+      LEMMY_HOSTNAME: "localhost:8536"
+      LEMMY__SETUP__ADMIN_USERNAME: incubrix_bot
+      LEMMY__SETUP__ADMIN_PASSWORD: incubrix_dev_password_123
+      LEMMY__SETUP__ADMIN_EMAIL: bot@incubrix.local
+      LEMMY__SETUP__SITE_NAME: "IncuBrix Local Test Instance"
+    ports:
+      - "8536:8536"
+    depends_on:
+      - lemmy-db
+
+  lemmy-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: lemmy
+      POSTGRES_PASSWORD: lemmy_password
+      POSTGRES_DB: lemmy
+    volumes:
+      - lemmy_db_data:/var/lib/postgresql/data
+
+  # Real local Ghost instance (Must-have #8).
+  ghost:
+    image: ghost:5-alpine
+    environment:
+      database__client: sqlite3
+      database__connection__filename: /var/lib/ghost/content/data/ghost-local.db
+      url: http://localhost:2368
+      NODE_ENV: development
+    ports:
+      - "2368:2368"
+    volumes:
+      - ghost_data:/var/lib/ghost/content
+
+volumes:
+  minio_data:
+  lemmy_db_data:
+  ghost_data:
+  app_data:

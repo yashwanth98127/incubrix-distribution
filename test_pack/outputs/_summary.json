@@ -1,0 +1,27 @@
+{
+  "total": 4,
+  "succeeded": 2,
+  "failed": 2,
+  "results": [
+    {
+      "name": "certify_discourse",
+      "ok": true,
+      "output_file": "test_pack/outputs/certify_discourse.result.json"
+    },
+    {
+      "name": "hardcase_429",
+      "ok": false,
+      "output_file": "test_pack/outputs/hardcase_429.result.json"
+    },
+    {
+      "name": "hardcase_promo_banned",
+      "ok": false,
+      "output_file": "test_pack/outputs/hardcase_promo_banned.result.json"
+    },
+    {
+      "name": "publish_discourse_ok",
+      "ok": true,
+      "output_file": "test_pack/outputs/publish_discourse_ok.result.json"
+    }
+  ]
+}

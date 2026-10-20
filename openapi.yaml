@@ -1,0 +1,295 @@
+openapi: 3.1.0
+info:
+  title: IncuBrix Distribution — Long-Tail Destination Network
+  version: 1.0.0
+  description: >
+    Connector service for forums, developer blogs, newsletters and partner
+    sites. Implements the IncuBrix connector contract (Appendix A) plus the
+    Integration Standard (jobs, idempotency, errors, health, manifests).
+servers:
+  - url: /api/v1
+paths:
+  /api/v1/destinations:
+    post:
+      summary: Add a destination (configuration, not code)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DestinationIn' }
+      responses:
+        '200': { description: created, content: { application/json: { schema: { $ref: '#/components/schemas/CreatedRef' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+    get:
+      summary: List destinations
+      parameters:
+        - name: connector_key
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        '200':
+          description: list of destinations
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Destination' } }
+
+  /api/v1/destinations/{destination_id}:
+    get:
+      summary: Get one destination
+      parameters:
+        - name: destination_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: ok, content: { application/json: { schema: { $ref: '#/components/schemas/Destination' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+
+  /api/v1/destinations/{destination_id}/certify:
+    post:
+      summary: Run the certification harness against this destination (background job)
+      parameters:
+        - name: destination_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema: { type: string }
+      responses:
+        '202': { description: accepted, content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+
+  /api/v1/publish:
+    post:
+      summary: Publish content to a destination (rules engine + connector, background job)
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PublishIn' }
+      responses:
+        '202': { description: accepted, content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+
+  /api/v1/jobs/{job_id}:
+    get:
+      summary: Poll a background job
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: ok, content: { application/json: { schema: { $ref: '#/components/schemas/Job' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+
+  /api/v1/catalogue/import:
+    post:
+      summary: Import a CSV of destinations (validate, dedupe, reachability, enrich)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        '202': { description: accepted, content: { application/json: { schema: { $ref: '#/components/schemas/JobAccepted' } } } }
+
+  /api/v1/catalogue/{destination_id}/rules-capture:
+    post:
+      summary: AI proposes posting rules from a rules page (pending human confirmation)
+      parameters:
+        - name: destination_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { rules_page_text: { type: string } }
+      responses:
+        '200': { description: proposal }
+
+  /api/v1/catalogue/{destination_id}/confirm-rules:
+    patch:
+      summary: Human confirms (or edits) the AI-proposed rules before they take effect
+      parameters:
+        - name: destination_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200': { description: applied }
+
+  /api/v1/catalogue/tailor/preview:
+    post:
+      summary: Preview destination-specific tailoring of a rendition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200': { description: ok }
+
+  /api/v1/recommend:
+    post:
+      summary: Rank destinations for a content item (Outstanding)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content_tags: { type: array, items: { type: string } }
+                is_promotional: { type: boolean }
+                ai_generated: { type: boolean }
+                limit: { type: integer }
+      responses:
+        '200': { description: ranked list }
+
+  /api/v1/metrics/summary:
+    get:
+      summary: Aggregated numbers for the Metrics tab (certification, reliability, rule safety)
+      responses:
+        '200': { description: ok }
+
+  /connector/v1/{connector_key}/{method}:
+    post:
+      summary: Raw connector contract method (Appendix A) — validate, publish, get_status, delete, fetch_metrics, refresh_auth, build_assist_pack
+      parameters:
+        - name: connector_key
+          in: path
+          required: true
+          schema: { type: string, enum: [discourse, lemmy, devto, ghost, webhook, assisted] }
+        - name: method
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200': { description: ok }
+        '401': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+        '503': { $ref: '#/components/responses/Error' }
+
+  /connector/v1/{connector_key}/manifest:
+    get:
+      summary: Get a connector's manifest (Appendix A YAML, served as JSON)
+      parameters:
+        - name: connector_key
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: ok }
+
+  /health:
+    get:
+      summary: Liveness
+      responses: { '200': { description: ok } }
+
+  /ready:
+    get:
+      summary: Readiness (DB reachable)
+      responses: { '200': { description: ok } }
+
+components:
+  responses:
+    Error:
+      description: Error envelope
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+  schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string, description: "UPPER_SNAKE_CASE, see README" }
+            message: { type: string }
+            retryable: { type: boolean }
+            details: { type: object }
+    CreatedRef:
+      type: object
+      properties: { id: { type: string }, created: { type: boolean } }
+    DestinationIn:
+      type: object
+      required: [name, url, platform_key, connector_key]
+      properties:
+        name: { type: string }
+        url: { type: string }
+        platform_key: { type: string }
+        connector_key: { type: string }
+        surface: { type: string }
+        frequency_cap: { type: object }
+        self_promo_allowed: { type: boolean }
+        link_policy: { type: string, enum: [allowed, one_link, none] }
+        disclosure_required: { type: boolean }
+        automation_allowed: { type: boolean }
+        instance_params: { type: object }
+    Destination:
+      allOf:
+        - $ref: '#/components/schemas/DestinationIn'
+        - type: object
+          properties:
+            id: { type: string }
+            relevance_score: { type: integer }
+            relevance_reason: { type: string }
+            level: { type: string }
+            last_certified_at: { type: string, nullable: true }
+            enabled: { type: boolean }
+    PublishIn:
+      type: object
+      required: [destination_id, rendition]
+      properties:
+        destination_id: { type: string }
+        rendition: { $ref: '#/components/schemas/Rendition' }
+    Rendition:
+      type: object
+      required: [body]
+      properties:
+        title: { type: string }
+        body: { type: string }
+        content_type: { type: string, enum: [text, image, video_link, article] }
+        media_urls: { type: array, items: { type: string } }
+        canonical_url: { type: string }
+        tags: { type: array, items: { type: string } }
+        ai_generated: { type: boolean }
+        is_promotional: { type: boolean }
+    JobAccepted:
+      type: object
+      properties: { job_id: { type: string }, status: { type: string } }
+    Job:
+      type: object
+      properties:
+        job_id: { type: string }
+        kind: { type: string }
+        status: { type: string, enum: [queued, running, succeeded, failed] }
+        progress: { type: integer }
+        result: { type: object, nullable: true }
+        error: { $ref: '#/components/schemas/ErrorEnvelope' }

@@ -1,0 +1,8 @@
+name,url,platform_key,connector_key,audience_tags,category,description,language,rules_url
+AI Builders Forum,https://aibuilders.example.com,discourse,discourse,ai;founders,tech,A Discourse forum for AI tool builders and indie founders,en,https://aibuilders.example.com/rules
+Video Creators Hub,https://videocreators.example.com,lemmy,lemmy,video;creators,media,A Lemmy community for video creators and editors,en,https://videocreators.example.com/rules
+SaaS Marketing Circle,https://saasmarketing.example.com,discourse,discourse,marketing;saas,business,Discourse forum about SaaS marketing and growth,en,
+Dev Tools Weekly,https://devtools.example.com,devto,devto,ai;saas,dev,Dev.to-style publication for developer tools,en,
+Founder Stories Ghost Blog,https://founderstories.example.com,ghost,ghost,founders,blog,A Ghost blog featuring founder interviews,en,
+Bad Row Example,not-a-valid-url,discourse,discourse,,,,,
+Duplicate AI Builders,https://aibuilders.example.com,discourse,discourse,,,,,

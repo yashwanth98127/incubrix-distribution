@@ -1,0 +1,17 @@
+key: ghost
+version: 1.0.0
+tier: native
+auth: api_key
+surfaces:
+  - key: post
+    content_types: [article, text, image]
+    spec: {title_max_chars: 255, body_max_chars: 500000, links_allowed: true, accepted_media: [jpg, jpeg, png, gif]}
+rate_limits:
+  per_connection: {requests: 60, per_seconds: 60}
+capabilities: [publish, status, delete, metrics]
+error_map:
+  "429": PLATFORM_RATE_LIMIT
+  "422": PLATFORM_CONTENT_REJECTED
+  "401": CONNECTION_AUTH_EXPIRED
+  "503": PLATFORM_UNAVAILABLE
+instance_param: base_url   # one connector, many Ghost sites

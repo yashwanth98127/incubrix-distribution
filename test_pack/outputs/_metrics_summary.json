@@ -1,0 +1,20 @@
+{
+    "certification": {
+        "destinations_certified_per_connector": {
+            "discourse": 1
+        },
+        "total_destinations": 4,
+        "total_certified": 1
+    },
+    "reliability": {
+        "total_publish_attempts": 2,
+        "published": 1,
+        "publish_success_rate": 0.5,
+        "duplicate_posts_under_retry": 0
+    },
+    "rule_safety": {
+        "rule_checks_run": 12,
+        "violations_blocked": 1,
+        "checks_passed": 11
+    }
+}

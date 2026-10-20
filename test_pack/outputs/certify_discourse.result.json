@@ -1,0 +1,66 @@
+{
+  "kind": "certify",
+  "input": {
+    "kind": "certify",
+    "destination": {
+      "name": "Batch Certify Forum",
+      "url": "https://batch-certify.example.com",
+      "platform_key": "discourse",
+      "connector_key": "discourse"
+    }
+  },
+  "accepted": 202,
+  "job": {
+    "job_id": "job_9af7ddea8e524612",
+    "kind": "certify_destination",
+    "status": "succeeded",
+    "progress": 100,
+    "result": {
+      "certification_run_id": "cert_175fccf665c14b9c",
+      "ok": true,
+      "level_reached": "L3",
+      "evidence_path": "file:///home/claude/incubrix-distribution/data/local_storage/certification/dest_f4c1c1fd362243ee/20261020/aff44b9265564f0ea5b6ce0697ccd67f.json",
+      "steps": [
+        {
+          "step": "validate",
+          "ok": true,
+          "detail": {
+            "violations": []
+          },
+          "timestamp": "2026-10-20T06:32:46.930282"
+        },
+        {
+          "step": "publish",
+          "ok": true,
+          "detail": {
+            "platform_post_id": "151434",
+            "live_url": "/t/151434",
+            "status": "published"
+          },
+          "timestamp": "2026-10-20T06:32:46.979398"
+        },
+        {
+          "step": "get_status_confirms_live",
+          "ok": true,
+          "detail": {
+            "status": "published",
+            "live_url": "/t/151434"
+          },
+          "timestamp": "2026-10-20T06:32:47.025239"
+        },
+        {
+          "step": "delete_cleanup",
+          "ok": true,
+          "detail": {
+            "deleted": true
+          },
+          "timestamp": "2026-10-20T06:32:47.072681"
+        }
+      ],
+      "error": ""
+    },
+    "error": null,
+    "created_at": "2026-10-20T06:32:46.906478",
+    "updated_at": "2026-10-20T06:32:47.098690"
+  }
+}

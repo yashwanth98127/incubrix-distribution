@@ -1,0 +1,15 @@
+{
+  "kind": "publish",
+  "destination": {
+    "name": "Batch Test Forum",
+    "url": "https://batch-forum.example.com",
+    "platform_key": "discourse",
+    "connector_key": "discourse",
+    "frequency_cap": {"count": 3, "per_hours": 168}
+  },
+  "rendition": {
+    "title": "Batch test post",
+    "body": "This is a normal batch-run test post about AI tooling.",
+    "content_type": "text"
+  }
+}

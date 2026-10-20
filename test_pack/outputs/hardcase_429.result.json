@@ -1,0 +1,39 @@
+{
+  "kind": "publish",
+  "input": {
+    "kind": "publish",
+    "destination": {
+      "name": "Batch 429 Forum",
+      "url": "https://batch-429.example.com",
+      "platform_key": "discourse",
+      "connector_key": "discourse"
+    },
+    "rendition": {
+      "title": "TRIGGER_429 batch case",
+      "body": "This post deliberately triggers the mock platform's rate-limit response.",
+      "content_type": "text"
+    }
+  },
+  "accepted": 202,
+  "job": {
+    "job_id": "job_82395a4c8b15481c",
+    "kind": "publish",
+    "status": "failed",
+    "progress": 0,
+    "result": null,
+    "error": {
+      "code": "PLATFORM_RATE_LIMIT",
+      "message": "platform rate limited (429); back off using reset time",
+      "retryable": true,
+      "details": {
+        "reset_after_seconds": 2.0,
+        "body": {
+          "error": "rate limited"
+        }
+      },
+      "traceback": "Traceback (most recent call last):\n  File \"/home/claude/incubrix-distribution/app/core/jobs.py\", line 49, in _run\n    result = fn(db, job, *args, **kwargs)\n  File \"/home/claude/incubrix-distribution/app/routes/publish_routes.py\", line 24, in _publish_job\n    post = publish_to_destination(db, destination, Rendition(**rendition), idem_key)\n  File \"/home/claude/incubrix-distribution/app/core/publish_service.py\", line 55, in publish_to_destination\n    pub = connector.publish(PublishRequest(rendition=rendition, destination=dest_ref,\n                                            connection=connection, idempotency_key=idempotency_key))\n  File \"/home/claude/incubrix-distribution/app/connectors/discourse.py\", line 45, in publish\n    resp = call_platform(\n        \"POST\", f\"{base}/posts.json\", manifest,\n    ...<5 lines>...\n        },\n    )\n  File \"/home/claude/incubrix-distribution/app/connectors/http_util.py\", line 42, in call_platform\n    raise IncuBrixError(\n    ...<3 lines>...\n    )\napp.core.errors.IncuBrixError: platform rate limited (429); back off using reset time\n"
+    },
+    "created_at": "2026-10-20T06:32:47.246991",
+    "updated_at": "2026-10-20T06:32:47.363067"
+  }
+}

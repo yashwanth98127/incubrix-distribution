@@ -1,0 +1,14 @@
+{
+  "kind": "publish",
+  "destination": {
+    "name": "Batch 429 Forum",
+    "url": "https://batch-429.example.com",
+    "platform_key": "discourse",
+    "connector_key": "discourse"
+  },
+  "rendition": {
+    "title": "TRIGGER_429 batch case",
+    "body": "This post deliberately triggers the mock platform's rate-limit response.",
+    "content_type": "text"
+  }
+}
